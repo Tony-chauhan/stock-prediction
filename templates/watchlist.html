@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}Watchlist{% endblock %}
+{% block content %}
+<h2 class="mb-4">⭐ My Watchlist</h2>
+<form class="row g-2 mb-4" method="post">
+  <div class="col-md-9"><input name="ticker" class="form-control" placeholder="Add ticker e.g. NVDA" required></div>
+  <div class="col-md-3"><button name="action" value="add" class="btn btn-primary w-100">Add</button></div>
+</form>
+{% if watchlist %}
+<ul class="list-group">
+  {% for t in watchlist %}
+  <li class="list-group-item d-flex justify-content-between align-items-center">
+    <a href="{{ url_for('dashboard', ticker=t) }}">{{ t }}</a>
+    <form method="post"><input type="hidden" name="ticker" value="{{ t }}"><button name="action" value="remove" class="btn btn-sm btn-outline-danger">Remove</button></form>
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+<p class="text-secondary">Your watchlist is empty.</p>
+{% endif %}
+{% endblock %}

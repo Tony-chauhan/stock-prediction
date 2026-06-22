@@ -1,20 +1,50 @@
 {% extends 'base.html' %}
-{% block title %}Home - Stock Predictor{% endblock %}
+{% block title %}StockPredict — ML Market Forecasting{% endblock %}
 {% block content %}
-<div class="text-center py-5 hero rounded-4 mb-4">
-  <h1 class="display-4 fw-bold">Predict the Market</h1>
-  <p class="lead">Analyze historical stock data and forecast future prices with machine learning.</p>
-</div>
-<div class="row justify-content-center">
-  <div class="col-md-7">
-    <form action="{{ url_for('dashboard') }}" method="get" class="card card-body shadow-sm">
-      <label class="form-label">Search by company ticker symbol</label>
-      <div class="input-group input-group-lg">
-        <input name="ticker" class="form-control" placeholder="e.g. AAPL, MSFT, TSLA" required>
-        <button class="btn btn-primary" type="submit">Analyze</button>
+<section class="hero rounded-5 mb-5">
+  <div class="hero-glow"></div>
+  <div class="hero-content text-center py-5">
+    <span class="badge hero-badge mb-3">⚡ Powered by Machine Learning</span>
+    <h1 class="hero-title">Predict the Market<br>with Confidence</h1>
+    <p class="hero-sub mx-auto">Analyze historical equities and forecast future prices using a feature-engineered ML ensemble with walk-forward validation and uncertainty bands.</p>
+
+    <form action="{{ url_for('dashboard') }}" method="get" class="search-shell mx-auto mt-4">
+      <div class="input-group input-group-lg search-group">
+        <span class="input-group-text search-icon">🔍</span>
+        <input name="ticker" class="form-control search-input" placeholder="Search a ticker, e.g. AAPL" autocomplete="off" required>
+        <button class="btn btn-gradient px-4" type="submit">Analyze</button>
       </div>
-      <small class="text-secondary mt-2">Try popular tickers: AAPL, GOOGL, AMZN, TSLA, MSFT</small>
     </form>
+
+    <div class="ticker-chips mt-3">
+      {% for t in ['AAPL','MSFT','GOOGL','AMZN','TSLA','NVDA'] %}
+      <a class="chip" href="{{ url_for('dashboard', ticker=t) }}">{{ t }}</a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<div class="row g-4">
+  <div class="col-md-4">
+    <div class="feature-card h-100">
+      <div class="feature-ico">📈</div>
+      <h5>Interactive Charts</h5>
+      <p class="text-secondary mb-0">Zoom, pan and hover through historical prices with smooth Plotly visualizations.</p>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="feature-card h-100">
+      <div class="feature-ico">🧠</div>
+      <h5>ML Forecasting</h5>
+      <p class="text-secondary mb-0">A RandomForest ensemble on engineered TA features predicts the forward price path.</p>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="feature-card h-100">
+      <div class="feature-ico">🎯</div>
+      <h5>Confidence Bands</h5>
+      <p class="text-secondary mb-0">Every forecast ships with directional accuracy, RMSE and √t-scaled uncertainty bands.</p>
+    </div>
   </div>
 </div>
 {% endblock %}

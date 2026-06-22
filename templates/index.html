@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}Home - Stock Predictor{% endblock %}
+{% block content %}
+<div class="text-center py-5 hero rounded-4 mb-4">
+  <h1 class="display-4 fw-bold">Predict the Market</h1>
+  <p class="lead">Analyze historical stock data and forecast future prices with machine learning.</p>
+</div>
+<div class="row justify-content-center">
+  <div class="col-md-7">
+    <form action="{{ url_for('dashboard') }}" method="get" class="card card-body shadow-sm">
+      <label class="form-label">Search by company ticker symbol</label>
+      <div class="input-group input-group-lg">
+        <input name="ticker" class="form-control" placeholder="e.g. AAPL, MSFT, TSLA" required>
+        <button class="btn btn-primary" type="submit">Analyze</button>
+      </div>
+      <small class="text-secondary mt-2">Try popular tickers: AAPL, GOOGL, AMZN, TSLA, MSFT</small>
+    </form>
+  </div>
+</div>
+{% endblock %}

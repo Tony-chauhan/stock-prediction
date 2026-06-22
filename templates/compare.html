@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title %}Compare Stocks{% endblock %}
+{% block content %}
+<form class="row g-2 align-items-end mb-4 card card-body" method="get">
+  <div class="col-md-10">
+    <label class="form-label">Tickers (comma separated)</label>
+    <input name="tickers" value="{{ tickers }}" class="form-control" placeholder="AAPL,MSFT,GOOGL">
+  </div>
+  <div class="col-md-2">
+    <button class="btn btn-primary w-100">Compare</button>
+  </div>
+</form>
+{% if error %}<div class="alert alert-danger">{{ error }}</div>{% endif %}
+{% if chart_html %}<div class="card card-body">{{ chart_html|safe }}</div>{% endif %}
+{% endblock %}

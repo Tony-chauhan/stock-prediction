@@ -1,0 +1,7 @@
+.hero {
+  background: linear-gradient(135deg, #4f46e5 0%, #9333ea 100%);
+  color: #fff;
+}
+body { min-height: 100vh; }
+.card { border: none; box-shadow: 0 2px 12px rgba(0,0,0,.15); }
+.navbar-brand { letter-spacing: .5px; }

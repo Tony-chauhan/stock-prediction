@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block title %}{{ ticker }} Dashboard{% endblock %}
+{% block content %}
+<form class="row g-2 align-items-end mb-4 card card-body" method="get" action="{{ url_for('dashboard') }}">
+  <div class="col-md-3">
+    <label class="form-label">Ticker</label>
+    <input name="ticker" value="{{ ticker }}" class="form-control" required>
+  </div>
+  <div class="col-md-3">
+    <label class="form-label">Start date</label>
+    <input type="date" name="start" value="{{ start }}" class="form-control">
+  </div>
+  <div class="col-md-3">
+    <label class="form-label">End date</label>
+    <input type="date" name="end" value="{{ end }}" class="form-control">
+  </div>
+  <div class="col-md-2">
+    <label class="form-label">Forecast days</label>
+    <input type="number" name="forecast_days" value="{{ forecast_days }}" min="1" max="180" class="form-control">
+  </div>
+  <div class="col-md-1">
+    <button class="btn btn-primary w-100">Go</button>
+  </div>
+</form>
+
+{% if error %}
+  <div class="alert alert-danger">{{ error }}</div>
+{% else %}
+  <div class="row g-3 mb-4">
+    <div class="col-md-4"><div class="card card-body text-center"><h6 class="text-secondary">Last Close</h6><h3>${{ last_price }}</h3></div></div>
+    <div class="col-md-4"><div class="card card-body text-center"><h6 class="text-secondary">Forecast ({{ forecast_days }}d)</h6><h3>${{ next_price }}</h3></div></div>
+    <div class="col-md-4"><div class="card card-body text-center"><h6 class="text-secondary">Confidence (R2)</h6>
+      <h3 class="{{ 'text-success' if confidence and confidence >= 70 else 'text-warning' if confidence and confidence >= 40 else 'text-danger' }}">{{ confidence }}%</h3></div></div>
+  </div>
+  <div class="card card-body mb-4">{{ chart_html|safe }}</div>
+  <div class="card card-body mb-4">{{ pred_chart_html|safe }}</div>
+  <form method="post" action="{{ url_for('watchlist') }}">
+    <input type="hidden" name="ticker" value="{{ ticker }}">
+    <input type="hidden" name="action" value="add">
+    <button class="btn btn-outline-primary">⭐ Add {{ ticker }} to Watchlist</button>
+  </form>
+{% endif %}
+{% endblock %}

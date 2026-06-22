@@ -34,10 +34,16 @@ def dashboard():
     error = None
     chart_html = pred_chart_html = None
     confidence = last_price = next_price = None
+    rmse = mae = None
 
     try:
         df = get_stock_data(ticker, start, end)
-        future_dates, future_preds, confidence = predict_prices(df, forecast_days)
+        result = predict_prices(df, forecast_days)
+        future_dates = result['future_dates']
+        future_preds = result['future_preds']
+        lower, upper = result['lower'], result['upper']
+        confidence = result['confidence']
+        rmse, mae = result['rmse'], result['mae']
 
         hist = go.Figure()
         hist.add_trace(go.Scatter(x=df['Date'], y=df['Close'], name='Close', mode='lines'))
@@ -47,6 +53,11 @@ def dashboard():
 
         pred = go.Figure()
         pred.add_trace(go.Scatter(x=df['Date'], y=df['Close'], name='Historical', mode='lines'))
+        pred.add_trace(go.Scatter(x=future_dates, y=upper, name='Upper band',
+                                  mode='lines', line=dict(width=0), showlegend=False))
+        pred.add_trace(go.Scatter(x=future_dates, y=lower, name='Confidence band',
+                                  mode='lines', line=dict(width=0), fill='tonexty',
+                                  fillcolor='rgba(99,102,241,0.25)'))
         pred.add_trace(go.Scatter(x=future_dates, y=future_preds, name='Forecast',
                                   mode='lines', line=dict(dash='dash')))
         pred.update_layout(title=f'{ticker} {forecast_days}-Day Forecast', template='plotly_dark',
@@ -62,7 +73,7 @@ def dashboard():
                            forecast_days=forecast_days, chart_html=chart_html,
                            pred_chart_html=pred_chart_html, confidence=confidence,
                            last_price=last_price, next_price=next_price, error=error,
-                           watchlist=db.get_watchlist())
+                           rmse=rmse, mae=mae, watchlist=db.get_watchlist())
 
 
 @app.route('/compare')

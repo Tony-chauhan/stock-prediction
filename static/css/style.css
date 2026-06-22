@@ -56,6 +56,9 @@ main { flex: 1 0 auto; }
 .hero {
   position: relative;
   overflow: hidden;
+  min-height: 460px;
+  display: flex;
+  align-items: center;
   background: radial-gradient(120% 120% at 0% 0%, #1e1b4b 0%, transparent 55%),
               radial-gradient(120% 120% at 100% 0%, #4c1d95 0%, transparent 55%),
               linear-gradient(135deg, #4f46e5 0%, #9333ea 50%, #06b6d4 120%);
@@ -71,7 +74,46 @@ main { flex: 1 0 auto; }
   z-index: -1;
 }
 @keyframes float { from { transform: translate(0,0); } to { transform: translate(30%, 15%); } }
-.hero-content { position: relative; padding-inline: 1rem; }
+.hero-content { position: relative; padding-inline: 1rem; z-index: 2; }
+
+/* ----- 3D floating orb ----- */
+.orb-3d {
+  position: absolute;
+  top: 50%; right: 8%;
+  width: 160px; height: 160px;
+  transform-style: preserve-3d;
+  perspective: 800px;
+  z-index: 1;
+  pointer-events: none;
+  animation: orbFloat 7s ease-in-out infinite alternate;
+}
+.orb-3d .orb-ring {
+  position: absolute; inset: 0;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.35);
+  transform-style: preserve-3d;
+}
+.orb-3d .orb-ring:nth-child(1) { animation: spin3d 6s linear infinite; }
+.orb-3d .orb-ring:nth-child(2) { animation: spin3d 9s linear infinite reverse; border-color: rgba(168,85,247,0.6); }
+.orb-3d .orb-ring:nth-child(3) { animation: spin3d 12s linear infinite; border-color: rgba(6,182,212,0.6); }
+@keyframes spin3d {
+  from { transform: rotateX(60deg) rotateY(0deg) rotateZ(0deg); }
+  to   { transform: rotateX(60deg) rotateY(360deg) rotateZ(360deg); }
+}
+@keyframes orbFloat {
+  from { transform: translateY(-50%) translateZ(0); }
+  to   { transform: translateY(-62%) translateZ(40px); }
+}
+@media (max-width: 768px) { .orb-3d { display: none; } }
+
+/* ----- Scroll reveal ----- */
+.reveal { opacity: 0; transform: translateY(28px) scale(0.98); transition: opacity 0.6s ease, transform 0.6s ease; }
+.reveal.revealed { opacity: 1; transform: none; }
+
+/* ----- Tilt depth ----- */
+[data-tilt] { transform-style: preserve-3d; will-change: transform; }
+[data-tilt] .feature-ico { transform: translateZ(30px); }
+[data-tilt] h5 { transform: translateZ(18px); }
 .hero-badge {
   background: rgba(255,255,255,0.16);
   border: 1px solid rgba(255,255,255,0.25);

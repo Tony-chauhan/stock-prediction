@@ -1,8 +1,13 @@
 {% extends 'base.html' %}
 {% block title %}StockPredict — ML Market Forecasting{% endblock %}
 {% block content %}
-<section class="hero rounded-5 mb-5">
+<section class="hero rounded-5 mb-5" id="vanta-hero">
   <div class="hero-glow"></div>
+  <div class="orb-3d" aria-hidden="true">
+    <span class="orb-ring"></span>
+    <span class="orb-ring"></span>
+    <span class="orb-ring"></span>
+  </div>
   <div class="hero-content text-center py-5">
     <span class="badge hero-badge mb-3">⚡ Powered by Machine Learning</span>
     <h1 class="hero-title">Predict the Market<br>with Confidence</h1>
@@ -26,21 +31,21 @@
 
 <div class="row g-4">
   <div class="col-md-4">
-    <div class="feature-card h-100">
+    <div class="feature-card h-100 reveal" data-tilt data-tilt-max="12" data-tilt-glare data-tilt-max-glare="0.25">
       <div class="feature-ico">📈</div>
       <h5>Interactive Charts</h5>
       <p class="text-secondary mb-0">Zoom, pan and hover through historical prices with smooth Plotly visualizations.</p>
     </div>
   </div>
   <div class="col-md-4">
-    <div class="feature-card h-100">
+    <div class="feature-card h-100 reveal" data-tilt data-tilt-max="12" data-tilt-glare data-tilt-max-glare="0.25">
       <div class="feature-ico">🧠</div>
       <h5>ML Forecasting</h5>
       <p class="text-secondary mb-0">A RandomForest ensemble on engineered TA features predicts the forward price path.</p>
     </div>
   </div>
   <div class="col-md-4">
-    <div class="feature-card h-100">
+    <div class="feature-card h-100 reveal" data-tilt data-tilt-max="12" data-tilt-glare data-tilt-max-glare="0.25">
       <div class="feature-ico">🎯</div>
       <h5>Confidence Bands</h5>
       <p class="text-secondary mb-0">Every forecast ships with directional accuracy, RMSE and √t-scaled uncertainty bands.</p>

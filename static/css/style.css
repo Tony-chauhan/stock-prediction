@@ -114,6 +114,62 @@ main { flex: 1 0 auto; }
 [data-tilt] { transform-style: preserve-3d; will-change: transform; }
 [data-tilt] .feature-ico { transform: translateZ(30px); }
 [data-tilt] h5 { transform: translateZ(18px); }
+
+/* ----- KPI cards 3D depth ----- */
+.kpi { position: relative; overflow: hidden; }
+.kpi::before {
+  content: ""; position: absolute; inset: 0 0 auto 0; height: 3px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2), var(--accent-3));
+}
+.kpi .kpi-label { transform: translateZ(14px); }
+.kpi .kpi-val { transform: translateZ(34px); font-weight: 700; }
+
+/* ----- 3D animated candlestick motif ----- */
+.candle-scene {
+  perspective: 700px;
+  display: flex; justify-content: center;
+  padding: 0.5rem 0;
+}
+.candle-stage {
+  display: flex; align-items: flex-end; gap: 14px;
+  height: 90px;
+  transform-style: preserve-3d;
+  animation: stageSpin 14s ease-in-out infinite alternate;
+}
+@keyframes stageSpin {
+  from { transform: rotateY(-22deg) rotateX(8deg); }
+  to   { transform: rotateY(22deg) rotateX(8deg); }
+}
+.candle {
+  position: relative;
+  width: 12px;
+  border-radius: 3px;
+  transform-style: preserve-3d;
+  animation: candleBob 2.4s ease-in-out infinite;
+}
+.candle::before, .candle::after {
+  content: ""; position: absolute; left: 50%; width: 2px;
+  transform: translateX(-50%);
+  background: inherit; opacity: 0.7;
+}
+.candle::before { top: -10px; height: 10px; }
+.candle::after { bottom: -10px; height: 10px; }
+.candle-up { height: 60px; background: #22c55e; box-shadow: 0 0 14px rgba(34,197,94,0.5); }
+.candle-down { height: 40px; background: #ef4444; box-shadow: 0 0 14px rgba(239,68,68,0.5); }
+.candle:nth-child(2) { animation-delay: 0.2s; }
+.candle:nth-child(3) { animation-delay: 0.4s; }
+.candle:nth-child(4) { animation-delay: 0.6s; }
+.candle:nth-child(5) { animation-delay: 0.8s; }
+.candle:nth-child(6) { animation-delay: 1.0s; }
+.candle:nth-child(7) { animation-delay: 1.2s; }
+.candle:nth-child(8) { animation-delay: 1.4s; }
+@keyframes candleBob {
+  0%, 100% { transform: translateY(0) translateZ(0); }
+  50%      { transform: translateY(-10px) translateZ(20px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .candle, .candle-stage, .orb-3d, .orb-ring { animation: none !important; }
+}
 .hero-badge {
   background: rgba(255,255,255,0.16);
   border: 1px solid rgba(255,255,255,0.25);

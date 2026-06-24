@@ -169,5 +169,5 @@ Released under the [MIT License](LICENSE).
 ---
 
 <div align="center">
-Built for the Phase 2 Python Internship · TONY ENTERPRIZES
+Dharmender Chauhan Developer
 </div>

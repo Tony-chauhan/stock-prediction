@@ -1,52 +1,156 @@
 {% extends 'base.html' %}
-{% block title %}{{ ticker }} Dashboard{% endblock %}
+{% block title %}{{ company.name }} ({{ ticker }}) — Dashboard{% endblock %}
 {% block content %}
-<form class="row g-2 align-items-end mb-4 card card-body" method="get" action="{{ url_for('dashboard') }}">
-  <div class="col-md-3">
-    <label class="form-label">Ticker</label>
-    <input name="ticker" value="{{ ticker }}" class="form-control" required>
-  </div>
-  <div class="col-md-3">
-    <label class="form-label">Start date</label>
-    <input type="date" name="start" value="{{ start }}" class="form-control">
-  </div>
-  <div class="col-md-3">
-    <label class="form-label">End date</label>
-    <input type="date" name="end" value="{{ end }}" class="form-control">
-  </div>
-  <div class="col-md-2">
-    <label class="form-label">Forecast days</label>
-    <input type="number" name="forecast_days" value="{{ forecast_days }}" min="1" max="180" class="form-control">
-  </div>
-  <div class="col-md-1">
-    <button class="btn btn-primary w-100">Go</button>
-  </div>
-</form>
 
-{% if error %}
-  <div class="alert alert-danger">{{ error }}</div>
-{% else %}
-  <div class="candle-scene mb-4" aria-hidden="true">
-    <div class="candle-stage">
-      {% for c in ['up','down','up','up','down','up','down','up'] %}
-      <span class="candle candle-{{ c }}"></span>
-      {% endfor %}
+<!-- ===== TOP PANEL (COHESIVE COMPANY INFO + CONTROLS) ===== -->
+<div class="card mb-4 overflow-hidden reveal">
+  <div class="row g-0">
+    <!-- Left Panel: Company Brand Showcase in the Free Space -->
+    <div class="col-md-7 d-flex align-items-center p-4 border-end" style="border-color: rgba(128,128,128,0.15) !important;">
+      {% if error %}
+        <div class="w-100 py-2">
+          <div class="d-flex align-items-center gap-3 mb-2 text-danger">
+            <span class="fs-2">⚠️</span>
+            <div>
+              <h4 class="mb-0 fw-bold">Analysis Failed</h4>
+              <p class="mb-0 text-secondary small">The requested stock ticker could not be processed.</p>
+            </div>
+          </div>
+          <div class="alert alert-danger-subtle border-0 mb-0 py-2 small">
+            {{ error }}
+          </div>
+        </div>
+      {% else %}
+        <div class="d-flex align-items-center gap-4 w-100">
+          <div class="company-header-logo-wrap p-1 shadow" style="width: 80px; height: 80px; border-radius: 20px; flex-shrink: 0; background: rgba(255,255,255,0.08);">
+            {% if company.logo_url %}
+            <img src="{{ company.logo_url }}" alt="{{ company.name }} logo" class="company-header-logo" style="width: 100%; height: 100%; object-fit: contain; border-radius: 16px;"
+                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+            {% endif %}
+            <span class="company-header-fallback text-uppercase" {% if company.logo_url %}style="display:none"{% endif %} style="width: 100%; height: 100%; border-radius: 16px; font-size: 1.5rem; font-weight: 800; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #fff;">
+              {{ ticker[:2] }}
+            </span>
+          </div>
+          <div class="flex-grow-1">
+            <h3 class="fw-bold mb-1">{{ company.name }}</h3>
+            <div class="d-flex flex-wrap gap-2 align-items-center">
+              <span class="ticker-badge">{{ ticker }}</span>
+              {% if company.sector %}
+                <span class="badge bg-secondary-subtle text-secondary-emphasis" style="background-color: rgba(128,128,128,0.15) !important;">{{ company.sector }}</span>
+              {% endif %}
+              {% if company.country %}
+                <span class="badge bg-outline" style="border: 1px solid rgba(128,128,128,0.25);">🌐 {{ company.country }}</span>
+              {% endif %}
+            </div>
+            
+            <div class="d-flex gap-2 mt-3">
+              <form method="post" action="{{ url_for('watchlist') }}" class="m-0">
+                <input type="hidden" name="ticker" value="{{ ticker }}">
+                <input type="hidden" name="action" value="{{ 'remove' if ticker in watchlist else 'add' }}">
+                <button class="btn btn-sm {{ 'btn-warning' if ticker in watchlist else 'btn-outline-warning' }}">
+                  {{ '⭐ Watching' if ticker in watchlist else '☆ Watch' }}
+                </button>
+              </form>
+              <a class="btn btn-sm btn-outline-primary" href="{{ url_for('compare') }}?tickers={{ ticker }},MSFT,GOOGL">Compare</a>
+            </div>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Right Panel: Controls Form -->
+    <div class="col-md-5 p-4 bg-body-tertiary">
+      <h5 class="fw-bold mb-3">Forecast Controls</h5>
+      <form method="get" action="{{ url_for('dashboard') }}" id="dash-form" class="m-0">
+        <div class="mb-3">
+          <label class="form-label small fw-semibold text-secondary mb-1">Ticker Symbol</label>
+          <input name="ticker" value="{{ ticker }}" class="form-control font-mono fw-bold" required placeholder="e.g., AAPL">
+        </div>
+        <div class="row g-2 mb-3">
+          <div class="col-6">
+            <label class="form-label small fw-semibold text-secondary mb-1">Start Date</label>
+            <input type="date" name="start" value="{{ start }}" class="form-control form-control-sm">
+          </div>
+          <div class="col-6">
+            <label class="form-label small fw-semibold text-secondary mb-1">End Date</label>
+            <input type="date" name="end" value="{{ end }}" class="form-control form-control-sm">
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label small fw-semibold text-secondary mb-1">Forecast Days</label>
+          <input type="number" name="forecast_days" value="{{ forecast_days }}" min="1" max="180" class="form-control form-control-sm">
+        </div>
+        <button class="btn btn-gradient w-100" type="submit">Go</button>
+      </form>
     </div>
   </div>
-  <div class="row g-3 mb-4">
-    <div class="col-md-3 col-6"><div class="card card-body text-center kpi reveal" data-tilt data-tilt-max="14" data-tilt-glare data-tilt-max-glare="0.3"><h6 class="text-secondary kpi-label">Last Close</h6><h3 class="kpi-val">${{ last_price }}</h3></div></div>
-    <div class="col-md-3 col-6"><div class="card card-body text-center kpi reveal" data-tilt data-tilt-max="14" data-tilt-glare data-tilt-max-glare="0.3"><h6 class="text-secondary kpi-label">Forecast ({{ forecast_days }}d)</h6><h3 class="kpi-val">${{ next_price }}</h3></div></div>
-    <div class="col-md-3 col-6"><div class="card card-body text-center kpi reveal" data-tilt data-tilt-max="14" data-tilt-glare data-tilt-max-glare="0.3"><h6 class="text-secondary kpi-label">Directional Accuracy</h6>
-      <h3 class="kpi-val {{ 'text-success' if confidence and confidence >= 60 else 'text-warning' if confidence and confidence >= 50 else 'text-danger' }}">{{ confidence }}%</h3></div></div>
-    <div class="col-md-3 col-6"><div class="card card-body text-center kpi reveal" data-tilt data-tilt-max="14" data-tilt-glare data-tilt-max-glare="0.3"><h6 class="text-secondary kpi-label">RMSE / MAE</h6><h3 class="kpi-val fs-5">{{ rmse }} / {{ mae }}</h3></div></div>
+</div>
+
+{% if not error %}
+
+<!-- ===== KPI CARDS ===== -->
+<div class="candle-scene mb-4" aria-hidden="true">
+  <div class="candle-stage">
+    {% for c in ['up','down','up','up','down','up','down','up'] %}
+    <span class="candle candle-{{ c }}"></span>
+    {% endfor %}
   </div>
-  <p class="text-secondary small">Confidence = out-of-sample directional accuracy from walk-forward (TimeSeriesSplit) validation. Shaded area is an RMSE-based prediction interval scaled by &radic;t.</p>
-  <div class="card card-body mb-4">{{ chart_html|safe }}</div>
-  <div class="card card-body mb-4">{{ pred_chart_html|safe }}</div>
+</div>
+
+<div class="row g-3 mb-3">
+  <div class="col-md-3 col-6">
+    <div class="card card-body text-center kpi reveal" data-tilt data-tilt-max="14" data-tilt-glare data-tilt-max-glare="0.3">
+      <h6 class="text-secondary kpi-label">Last Close</h6>
+      <h3 class="kpi-val">${{ last_price }}</h3>
+    </div>
+  </div>
+  <div class="col-md-3 col-6">
+    <div class="card card-body text-center kpi reveal" data-tilt data-tilt-max="14" data-tilt-glare data-tilt-max-glare="0.3">
+      <h6 class="text-secondary kpi-label">Forecast ({{ forecast_days }}d)</h6>
+      <h3 class="kpi-val {% if next_price and last_price %}{{ 'text-success' if next_price >= last_price else 'text-danger' }}{% endif %}">
+        ${{ next_price }}
+        <small class="fs-6 fw-normal">
+          {% if next_price and last_price %}
+            {% set chg = ((next_price - last_price) / last_price * 100) | round(1) %}
+            {% if chg >= 0 %}▲ {{ chg }}%{% else %}▼ {{ (chg * -1) }}%{% endif %}
+          {% endif %}
+        </small>
+      </h3>
+    </div>
+  </div>
+  <div class="col-md-3 col-6">
+    <div class="card card-body text-center kpi reveal" data-tilt data-tilt-max="14" data-tilt-glare data-tilt-max-glare="0.3">
+      <h6 class="text-secondary kpi-label">Directional Accuracy</h6>
+      <h3 class="kpi-val {{ 'text-success' if confidence and confidence >= 60 else 'text-warning' if confidence and confidence >= 50 else 'text-danger' }}">{{ confidence }}%</h3>
+    </div>
+  </div>
+  <div class="col-md-3 col-6">
+    <div class="card card-body text-center kpi reveal" data-tilt data-tilt-max="14" data-tilt-glare data-tilt-max-glare="0.3">
+      <h6 class="text-secondary kpi-label">RMSE / MAE</h6>
+      <h3 class="kpi-val fs-5">{{ rmse }} / {{ mae }}</h3>
+    </div>
+  </div>
+</div>
+
+<p class="text-secondary small mb-4">
+  Confidence = out-of-sample directional accuracy from walk-forward (TimeSeriesSplit) validation.
+  Shaded area is an RMSE-based prediction interval scaled by &radic;t.
+</p>
+
+<!-- ===== CHARTS ===== -->
+<div class="card card-body mb-4">{{ chart_html|safe }}</div>
+<div class="card card-body mb-4">{{ pred_chart_html|safe }}</div>
+
+<!-- ===== MOBILE WATCH BUTTON ===== -->
+<div class="d-md-none mb-3">
   <form method="post" action="{{ url_for('watchlist') }}">
     <input type="hidden" name="ticker" value="{{ ticker }}">
-    <input type="hidden" name="action" value="add">
-    <button class="btn btn-outline-primary">⭐ Add {{ ticker }} to Watchlist</button>
+    <input type="hidden" name="action" value="{{ 'remove' if ticker in watchlist else 'add' }}">
+    <button class="btn btn-outline-warning w-100">
+      {{ '⭐ Remove from Watchlist' if ticker in watchlist else '☆ Add to Watchlist' }}
+    </button>
   </form>
+</div>
+
 {% endif %}
 {% endblock %}

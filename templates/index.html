@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% block title %}StockPredict — ML Market Forecasting{% endblock %}
 {% block content %}
+<!-- ===== HERO ===== -->
 <section class="hero rounded-5 mb-5" id="vanta-hero">
   <div class="hero-glow"></div>
   <div class="orb-3d" aria-hidden="true">
@@ -13,22 +14,51 @@
     <h1 class="hero-title">Predict the Market<br>with Confidence</h1>
     <p class="hero-sub mx-auto">Analyze historical equities and forecast future prices using a feature-engineered ML ensemble with walk-forward validation and uncertainty bands.</p>
 
-    <form action="{{ url_for('dashboard') }}" method="get" class="search-shell mx-auto mt-4">
+    <form action="{{ url_for('dashboard') }}" method="get" class="search-shell mx-auto mt-4" id="hero-search-form">
       <div class="input-group input-group-lg search-group">
         <span class="input-group-text search-icon">🔍</span>
-        <input name="ticker" class="form-control search-input" placeholder="Search a ticker, e.g. AAPL" autocomplete="off" required>
-        <button class="btn btn-gradient px-4" type="submit">Analyze</button>
+        <input name="ticker" id="ticker-input" class="form-control search-input"
+               placeholder="Search a ticker — e.g. AAPL, TSLA, NVDA"
+               autocomplete="off" autocapitalize="characters" spellcheck="false" required>
+        <button class="btn btn-gradient px-4" type="submit" id="analyze-btn">Analyze</button>
       </div>
     </form>
 
     <div class="ticker-chips mt-3">
-      {% for t in ['AAPL','MSFT','GOOGL','AMZN','TSLA','NVDA'] %}
+      {% for t in ['AAPL','MSFT','GOOGL','AMZN','TSLA','NVDA','META','JPM'] %}
       <a class="chip" href="{{ url_for('dashboard', ticker=t) }}">{{ t }}</a>
       {% endfor %}
     </div>
   </div>
 </section>
 
+<!-- ===== FEATURED COMPANIES ===== -->
+<div class="section-head mb-3">
+  <h4 class="section-title">Featured Companies</h4>
+  <p class="text-secondary small mb-0">Click any card to see the forecast dashboard</p>
+</div>
+<div class="company-grid mb-5">
+  {% for c in featured %}
+  <a href="{{ url_for('dashboard', ticker=c.ticker) }}" class="company-card reveal" data-tilt data-tilt-max="10" data-tilt-glare data-tilt-max-glare="0.18">
+    <div class="company-logo-wrap">
+      <img src="{{ c.logo_url }}" alt="{{ c.name }} logo" class="company-logo"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <span class="company-logo-fallback">{{ c.ticker[:2] }}</span>
+    </div>
+    <div class="company-info">
+      <span class="company-name">{{ c.name }}</span>
+      <span class="ticker-badge">{{ c.ticker }}</span>
+    </div>
+    <span class="company-sector">{{ c.sector }}</span>
+    <span class="company-arrow">→</span>
+  </a>
+  {% endfor %}
+</div>
+
+<!-- ===== FEATURE CARDS ===== -->
+<div class="section-head mb-3">
+  <h4 class="section-title">What You Get</h4>
+</div>
 <div class="row g-4">
   <div class="col-md-4">
     <div class="feature-card h-100 reveal" data-tilt data-tilt-max="12" data-tilt-glare data-tilt-max-glare="0.25">
@@ -52,4 +82,9 @@
     </div>
   </div>
 </div>
+
+<!-- ===== DISCLAIMER ===== -->
+<p class="disclaimer text-center mt-5 text-secondary small">
+  ⚠️ Educational use only — not financial advice. Past performance does not guarantee future results.
+</p>
 {% endblock %}

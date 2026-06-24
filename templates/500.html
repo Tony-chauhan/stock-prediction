@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block title %}500 — Server Error{% endblock %}
+{% block content %}
+<div class="error-page text-center py-5">
+  <div class="error-code">500</div>
+  <h2 class="mt-3">Something Went Wrong</h2>
+  <p class="text-secondary">The server encountered an error. Please try again shortly.</p>
+  <a href="{{ url_for('index') }}" class="btn btn-gradient mt-3">Back to Home</a>
+</div>
+{% endblock %}

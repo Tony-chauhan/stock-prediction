@@ -1,15 +1,39 @@
 {% extends 'base.html' %}
-{% block title %}Compare Stocks{% endblock %}
+{% block title %}Compare Stocks — StockPredict{% endblock %}
 {% block content %}
-<form class="row g-2 align-items-end mb-4 card card-body" method="get">
+<h2 class="mb-4">📊 Compare Stocks</h2>
+
+<form class="row g-2 align-items-end mb-4 card card-body" method="get" id="compare-form">
   <div class="col-md-10">
-    <label class="form-label">Tickers (comma separated)</label>
-    <input name="tickers" value="{{ tickers }}" class="form-control" placeholder="AAPL,MSFT,GOOGL">
+    <label class="form-label fw-semibold">Tickers (comma separated, max 6)</label>
+    <input name="tickers" value="{{ tickers }}" class="form-control font-mono"
+           placeholder="AAPL,MSFT,GOOGL,NVDA" autocapitalize="characters" spellcheck="false">
   </div>
   <div class="col-md-2">
-    <button class="btn btn-primary w-100">Compare</button>
+    <button class="btn btn-gradient w-100" type="submit">Compare</button>
   </div>
 </form>
-{% if error %}<div class="alert alert-danger">{{ error }}</div>{% endif %}
-{% if chart_html %}<div class="card card-body">{{ chart_html|safe }}</div>{% endif %}
+
+<!-- Company pills -->
+{% if companies %}
+<div class="compare-pills mb-4">
+  {% for c in companies %}
+  <a href="{{ url_for('dashboard', ticker=c.ticker) }}" class="compare-pill reveal">
+    {% if c.logo_url %}
+    <img src="{{ c.logo_url }}" alt="{{ c.name }}" class="compare-pill-logo"
+         onerror="this.style.display='none'">
+    {% endif %}
+    <span class="compare-pill-name">{{ c.name }}</span>
+    <span class="ticker-badge">{{ c.ticker }}</span>
+  </a>
+  {% endfor %}
+</div>
+{% endif %}
+
+{% if error %}
+  <div class="alert alert-danger">⚠️ {{ error }}</div>
+{% endif %}
+{% if chart_html %}
+  <div class="card card-body">{{ chart_html|safe }}</div>
+{% endif %}
 {% endblock %}

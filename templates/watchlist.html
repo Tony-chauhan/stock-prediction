@@ -1,21 +1,54 @@
 {% extends 'base.html' %}
-{% block title %}Watchlist{% endblock %}
+{% block title %}My Watchlist — StockPredict{% endblock %}
 {% block content %}
-<h2 class="mb-4">⭐ My Watchlist</h2>
-<form class="row g-2 mb-4" method="post">
-  <div class="col-md-9"><input name="ticker" class="form-control" placeholder="Add ticker e.g. NVDA" required></div>
-  <div class="col-md-3"><button name="action" value="add" class="btn btn-primary w-100">Add</button></div>
+<div class="d-flex align-items-center gap-3 mb-4">
+  <h2 class="mb-0">⭐ My Watchlist</h2>
+  <span class="badge bg-secondary">{{ watchlist|length }} stocks</span>
+</div>
+
+<form class="row g-2 mb-4 card card-body" method="post">
+  <div class="col-md-9">
+    <input name="ticker" class="form-control font-mono"
+           placeholder="Add ticker — e.g. NVDA, V, WMT"
+           autocapitalize="characters" spellcheck="false" required>
+  </div>
+  <div class="col-md-3">
+    <button name="action" value="add" class="btn btn-gradient w-100">+ Add</button>
+  </div>
 </form>
-{% if watchlist %}
-<ul class="list-group">
-  {% for t in watchlist %}
-  <li class="list-group-item d-flex justify-content-between align-items-center">
-    <a href="{{ url_for('dashboard', ticker=t) }}">{{ t }}</a>
-    <form method="post"><input type="hidden" name="ticker" value="{{ t }}"><button name="action" value="remove" class="btn btn-sm btn-outline-danger">Remove</button></form>
-  </li>
+
+{% if items %}
+<div class="watch-list">
+  {% for item in items %}
+  <div class="watch-item reveal">
+    <a href="{{ url_for('dashboard', ticker=item.ticker) }}" class="watch-link">
+      <div class="watch-logo-wrap">
+        {% if item.logo_url %}
+        <img src="{{ item.logo_url }}" alt="{{ item.name }}" class="watch-logo"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        {% endif %}
+        <span class="watch-logo-fallback" {% if item.logo_url %}style="display:none"{% endif %}>{{ item.ticker[:2] }}</span>
+      </div>
+      <div class="watch-info">
+        <span class="watch-name">{{ item.name }}</span>
+        <span class="ticker-badge">{{ item.ticker }}</span>
+        {% if item.sector %}<span class="watch-sector text-secondary">{{ item.sector }}</span>{% endif %}
+      </div>
+      <span class="watch-arrow ms-auto text-secondary">→</span>
+    </a>
+    <form method="post" class="m-0">
+      <input type="hidden" name="ticker" value="{{ item.ticker }}">
+      <button name="action" value="remove" class="btn btn-sm btn-outline-danger watch-remove">✕</button>
+    </form>
+  </div>
   {% endfor %}
-</ul>
+</div>
 {% else %}
-<p class="text-secondary">Your watchlist is empty.</p>
+<div class="empty-state text-center py-5">
+  <div class="empty-ico">📋</div>
+  <h5 class="mt-3">Your watchlist is empty</h5>
+  <p class="text-secondary">Add tickers above or click "Watch" on any dashboard.</p>
+  <a href="{{ url_for('index') }}" class="btn btn-gradient mt-2">Browse Stocks</a>
+</div>
 {% endif %}
 {% endblock %}

@@ -16,7 +16,7 @@ joblib==1.4.2
 requests-cache==1.2.1
 
 # Validation & Security
-Flask-Talisman==1.1.1
+Flask-Talisman==1.1.0
 Flask-Limiter==3.8.0
 bleach==6.1.0
 
